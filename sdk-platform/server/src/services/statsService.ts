@@ -157,16 +157,16 @@ export class StatsService {
       const placeholders = events.map(() => '?').join(',');
       const sql = `
         SELECT 
-          DATE(timestamp) as date,
+          DATE_FORMAT(CONVERT_TZ(timestamp, '+00:00', '+08:00'), '%Y-%m-%d %H:00:00') as timestamp,
           event_name as eventName,
           COUNT(*) as count,
           COUNT(DISTINCT user_id) as users
         FROM events
         WHERE project_id = ?
-          AND DATE(timestamp) BETWEEN ? AND ?
+          AND DATE(CONVERT_TZ(timestamp, '+00:00', '+08:00')) BETWEEN ? AND ?
           AND event_name IN (${placeholders})
-        GROUP BY DATE(timestamp), event_name
-        ORDER BY date, event_name
+        GROUP BY DATE_FORMAT(CONVERT_TZ(timestamp, '+00:00', '+08:00'), '%Y-%m-%d %H:00:00'), event_name
+        ORDER BY timestamp ASC, event_name
       `;
 
       const params = [projectId, startDate, endDate, ...events];
@@ -180,7 +180,7 @@ export class StatsService {
       const results = Array.isArray(rows) ? rows : [];
       
       return results.map(row => ({
-        date: row.date,
+        date: row.timestamp,
         eventName: row.eventName,
         count: Number(row.count),
         users: Number(row.users),

@@ -62,9 +62,12 @@ const EventAnalysis: React.FC = () => {
 
   const columns = [
     {
-      title: '日期',
+      title: '时间',
       dataIndex: 'date',
       key: 'date',
+      render: (text: string) => {
+        return text.replace('T', ' ').replace('.000Z', '');
+      }
     },
     {
       title: '事件名称',

@@ -2,9 +2,10 @@
 CREATE DATABASE IF NOT EXISTS `sdk-platform` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `sdk-platform`;
 
--- 设置连接字符集
+-- 设置连接字符集和时区
 SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
+SET time_zone = '+08:00';
 
 -- 创建项目表
 CREATE TABLE IF NOT EXISTS projects (

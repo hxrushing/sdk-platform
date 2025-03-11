@@ -43,7 +43,7 @@ export class TrackingService {
         JSON.stringify(eventData.eventParams || {}),
         eventData.uid || null,
         JSON.stringify(eventData.deviceInfo || {}),
-        new Date(eventData.timestamp || Date.now())
+        new Date(eventData.timestamp || Date.now()).toISOString().slice(0, 19).replace('T', ' ')
       ];
 
       console.log('插入事件数据:', params);
