@@ -98,17 +98,6 @@ const TestPage: React.FC = () => {
           <p>点击这些按钮将触发错误，SDK会自动捕获并上报</p>
         </div>
 
-        {/* 测试结果展示 */}
-        <div className="test-section" style={{ marginTop: '40px' }}>
-          <h3>测试结果查看方式：</h3>
-          <ol>
-            <li>打开浏览器开发者工具</li>
-            <li>切换到Network标签页</li>
-            <li>筛选XHR请求</li>
-            <li>查看发送到 {sdkConfig.serverUrl}/track 的请求</li>
-            <li>或直接在sdk-platform平台查看数据</li>
-          </ol>
-        </div>
       </div>
     </div>
   );

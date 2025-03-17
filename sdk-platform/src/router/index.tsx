@@ -4,6 +4,7 @@ import Dashboard from '@/pages/Dashboard';
 import EventAnalysis from '@/pages/EventAnalysis';
 import FunnelAnalysis from '@/pages/FunnelAnalysis';
 import Settings from '@/pages/Settings';
+import EventManagement from '@/pages/EventManagement';
 import App from '@/App';
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/settings',
         element: <Settings />,
+      },
+      {
+        path: '/event-management',
+        element: <EventManagement />,
       },
     ],
   },

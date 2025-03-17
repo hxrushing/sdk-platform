@@ -65,9 +65,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       label: '漏斗分析',
     },
     {
-      key: '/settings',
+      key: '/event-management',
       icon: <SettingOutlined />,
-      label: '事件配置',
+      label: '事件管理',
     },
   ];
 
