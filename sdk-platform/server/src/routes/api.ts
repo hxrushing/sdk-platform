@@ -207,5 +207,30 @@ export function createApiRouter(db: Connection) {
     }
   });
 
+  // 获取Top 5访问项目数据
+  router.get('/top-projects', async (req, res) => {
+    try {
+      const { projectId, startDate, endDate } = req.query;
+      
+      if (!projectId || !startDate || !endDate) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required parameters' 
+        });
+      }
+
+      const data = await statsService.getTopVisitedProjects(
+        projectId as string,
+        startDate as string,
+        endDate as string
+      );
+      
+      res.json({ success: true, data });
+    } catch (error) {
+      console.error('Error getting top projects:', error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  });
+
   return router;
 } 

@@ -49,6 +49,12 @@ export interface Project {
   description: string;
 }
 
+export interface TopProject {
+  projectName: string;
+  visitCount: number;
+  uniqueVisitors: number;
+}
+
 // API 方法
 export const apiService = {
   // 获取统计数据
@@ -145,6 +151,16 @@ export const apiService = {
   // 获取项目列表
   async getProjects(): Promise<Project[]> {
     const { data } = await api.get('/projects');
+    return data.data;
+  },
+
+  // 获取Top 5访问项目数据
+  async getTopProjects(params: {
+    projectId: string;
+    startDate: string;
+    endDate: string;
+  }): Promise<TopProject[]> {
+    const { data } = await api.get('/top-projects', { params });
     return data.data;
   }
 }; 

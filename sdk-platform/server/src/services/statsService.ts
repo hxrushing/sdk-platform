@@ -283,4 +283,32 @@ export class StatsService {
     const date = new Date(dateStr);
     return date instanceof Date && !isNaN(date.getTime());
   }
+
+  // 获取Top 5访问项目
+  async getTopVisitedProjects(projectId: string, startDate: string, endDate: string) {
+    try {
+      console.log('开始获取Top 5访问项目数据:', { projectId, startDate, endDate });
+      
+      const sql = `
+        SELECT 
+          p.name as projectName,
+          COUNT(*) as visitCount,
+          COUNT(DISTINCT e.user_id) as uniqueVisitors
+        FROM events e
+        JOIN projects p ON e.project_id = p.id
+        WHERE e.project_id = ?
+          AND DATE(e.timestamp) BETWEEN ? AND ?
+        GROUP BY p.id, p.name
+        ORDER BY visitCount DESC
+        LIMIT 5
+      `;
+
+      const [rows] = await this.db.execute(sql, [projectId, startDate, endDate]);
+      console.log('Top 5访问项目数据:', rows);
+      return rows;
+    } catch (err: any) {
+      console.error('获取Top 5访问项目数据失败:', err);
+      throw new Error(`Failed to get top visited projects: ${err.message}`);
+    }
+  }
 } 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, DatePicker, Statistic, Spin, message } from 'antd';
+import { Card, Row, Col, DatePicker, Statistic, Spin, message, Table } from 'antd';
 import { Line } from '@ant-design/plots';
 import dayjs from 'dayjs';
 import { apiService } from '@/services/api';
+import type { TopProject } from '@/services/api';
 
 const { RangePicker } = DatePicker;
 
@@ -19,21 +20,28 @@ const Dashboard: React.FC = () => {
     avgPages: 0,
     avgDuration: 0
   });
+  const [topProjects, setTopProjects] = useState<TopProject[]>([]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [stats, overviewData] = await Promise.all([
+      const [stats, overviewData, topProjectsData] = await Promise.all([
         apiService.getStats({
           projectId: 'demo-project',
           startDate: dateRange[0].format('YYYY-MM-DD'),
           endDate: dateRange[1].format('YYYY-MM-DD')
         }),
-        apiService.getDashboardOverview('demo-project')
+        apiService.getDashboardOverview('demo-project'),
+        apiService.getTopProjects({
+          projectId: 'demo-project',
+          startDate: dateRange[0].format('YYYY-MM-DD'),
+          endDate: dateRange[1].format('YYYY-MM-DD')
+        })
       ]);
 
       setStatsData(stats);
       setOverview(overviewData);
+      setTopProjects(topProjectsData);
     } catch (error) {
       message.error('获取数据失败');
       console.error('Error fetching dashboard data:', error);
@@ -62,6 +70,26 @@ const Dashboard: React.FC = () => {
       },
     },
   };
+
+  const topProjectsColumns = [
+    {
+      title: '项目名称',
+      dataIndex: 'projectName',
+      key: 'projectName',
+    },
+    {
+      title: '访问次数',
+      dataIndex: 'visitCount',
+      key: 'visitCount',
+      sorter: (a: TopProject, b: TopProject) => a.visitCount - b.visitCount,
+    },
+    {
+      title: '独立访客',
+      dataIndex: 'uniqueVisitors',
+      key: 'uniqueVisitors',
+      sorter: (a: TopProject, b: TopProject) => a.uniqueVisitors - b.uniqueVisitors,
+    },
+  ];
 
   return (
     <Spin spinning={loading}>
@@ -120,8 +148,14 @@ const Dashboard: React.FC = () => {
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           <Col span={12}>
-            <Card title="Top 5 访问页面">
-              {/* 这里可以添加表格或列表组件 */}
+            <Card title="Top 5 访问项目">
+              <Table
+                dataSource={topProjects}
+                columns={topProjectsColumns}
+                rowKey="projectName"
+                pagination={false}
+                size="small"
+              />
             </Card>
           </Col>
           <Col span={12}>
