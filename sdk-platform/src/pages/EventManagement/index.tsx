@@ -20,7 +20,6 @@ import {
 } from '@ant-design/icons';
 import { apiService } from '@/services/api';
 import type { EventDefinition } from '@/types';
-import JSONEditor from '@/components/JSONEditor';
 
 const EventManagement: React.FC = () => {
   const [definitions, setDefinitions] = useState<EventDefinition[]>([]);
@@ -262,38 +261,40 @@ const EventManagement: React.FC = () => {
             <Input.TextArea
               rows={8}
               placeholder={`请输入JSON格式的参数定义，例如：
-{
-  "page_url": {
-    "type": "string",
-    "description": "页面URL"
-  },
-  "duration": {
-    "type": "number",
-    "description": "停留时长（秒）"
-  }
-}`}
+              {
+                "page_url": {
+                  "type": "string",
+                  "description": "页面URL"
+                },
+                "duration": {
+                  "type": "number",
+                  "description": "停留时长（秒）"
+                }
+              }`}
             />
           </Form.Item>
         </Form>
       </Modal>
 
-      <style jsx>{`
-        .event-management {
-          padding: 24px;
-        }
-        .ellipsis {
-          display: inline-block;
-          width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .params-preview {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-      `}</style>
+      <style>
+        {`
+          .event-management {
+            padding: 24px;
+          }
+          .ellipsis {
+            display: inline-block;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .params-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+        `}
+      </style>
     </div>
   );
 };

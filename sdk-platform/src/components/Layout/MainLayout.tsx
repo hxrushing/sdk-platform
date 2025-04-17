@@ -11,7 +11,8 @@ import { Layout, Menu, Button, theme, Select, Modal, Form, Input, message } from
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { apiService, Project } from '@/services/api';
-import logo from '@/assets/1.jpg';
+import logo1 from '@/assets/logo1.png';
+import logo2 from '@/assets/logo2.png';
 
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
@@ -99,7 +100,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           transition: 'all 0.3s'
         }}>
           <img 
-            src={logo} 
+            src={collapsed ? logo1 : logo2} 
             alt="Logo" 
             style={{ 
               height: '100%',
@@ -113,7 +114,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={[location.pathname]}
+          selectedKeys={[location.pathname]}
           items={menuItems}
           onSelect={({ key }) => navigate(key)}
         />

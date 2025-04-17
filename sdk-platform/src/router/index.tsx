@@ -1,9 +1,8 @@
 // src/router/index.tsx
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Dashboard from '@/pages/Dashboard';
 import EventAnalysis from '@/pages/EventAnalysis';
 import FunnelAnalysis from '@/pages/FunnelAnalysis';
-import Settings from '@/pages/Settings';
 import EventManagement from '@/pages/EventManagement';
 import App from '@/App';
 
@@ -14,7 +13,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Dashboard />,
+        element: <Navigate to="/dashboard" replace />,
       },
       {
         path: '/dashboard',
@@ -27,10 +26,6 @@ const router = createBrowserRouter([
       {
         path: '/funnel',
         element: <FunnelAnalysis />,
-      },
-      {
-        path: '/settings',
-        element: <Settings />,
       },
       {
         path: '/event-management',
