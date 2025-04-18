@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, DatePicker, Statistic, Spin, message, Table } from 'antd';
+import { Card, Row, Col, DatePicker, Statistic, Spin, message, Table, Button, Space } from 'antd';
 import { Line } from '@ant-design/plots';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { apiService } from '@/services/api';
 import type { TopProject } from '@/services/api';
+import FloatingPanel from '@/components/FloatingPanel';
 
 const { RangePicker } = DatePicker;
 
@@ -21,6 +23,7 @@ const Dashboard: React.FC = () => {
     avgDuration: 0
   });
   const [topProjects, setTopProjects] = useState<TopProject[]>([]);
+  const [showHelp, setShowHelp] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -94,11 +97,58 @@ const Dashboard: React.FC = () => {
   return (
     <Spin spinning={loading}>
       <div>
+        {showHelp && (
+          <FloatingPanel
+            title="实时数据概览"
+            defaultPosition={{ x: window.innerWidth - 320, y: 20 }}
+            width={300}
+          >
+            <div>
+              <p>📊 <strong>今日实时数据</strong></p>
+              <ul>
+                <li>PV：{overview.todayPV || 0} 次</li>
+                <li>UV：{overview.todayUV || 0} 人</li>
+                <li>人均访问：{typeof overview.avgPages === 'number' ? overview.avgPages.toFixed(1) : '0.0'} 页</li>
+                <li>平均停留：{typeof overview.avgDuration === 'number' ? overview.avgDuration.toFixed(1) : '0.0'} 分钟</li>
+              </ul>
+              <p>📈 <strong>访问趋势</strong></p>
+              <ul>
+                <li>最近7天PV：{statsData.reduce((sum, item) => sum + item.pv, 0)} 次</li>
+                <li>最近7天UV：{statsData.reduce((sum, item) => sum + item.uv, 0)} 人</li>
+              </ul>
+              <p>🏆 <strong>最活跃项目</strong></p>
+              <ul>
+                {topProjects.slice(0, 2).map(project => (
+                  <li key={project.projectName}>
+                    {project.projectName}: {project.visitCount} 次访问
+                  </li>
+                ))}
+              </ul>
+              <Button 
+                type="link" 
+                onClick={() => setShowHelp(false)}
+                style={{ padding: 0, marginTop: 8 }}
+              >
+                关闭面板
+              </Button>
+            </div>
+          </FloatingPanel>
+        )}
+
         <div style={{ marginBottom: 16 }}>
-          <RangePicker
-            value={dateRange}
-            onChange={(dates) => dates && setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs])}
-          />
+          <Space>
+            <RangePicker
+              value={dateRange}
+              onChange={(dates) => dates && setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs])}
+            />
+            <Button
+              type="text"
+              icon={<QuestionCircleOutlined />}
+              onClick={() => setShowHelp(!showHelp)}
+            >
+              {showHelp ? '隐藏帮助' : '显示帮助'}
+            </Button>
+          </Space>
         </div>
 
         <Row gutter={[16, 16]}>
