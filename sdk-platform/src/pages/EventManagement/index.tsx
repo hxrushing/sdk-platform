@@ -27,6 +27,9 @@ const EventManagement: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingDefinition, setEditingDefinition] = useState<EventDefinition | null>(null);
   const [form] = Form.useForm();
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // 获取事件定义列表
   const fetchDefinitions = async () => {
@@ -168,6 +171,14 @@ const EventManagement: React.FC = () => {
     },
   ];
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (page: number, size: number) => {
+    setPageSize(size);
+  };
+
   return (
     <div className="event-management">
       <Card
@@ -192,9 +203,14 @@ const EventManagement: React.FC = () => {
           rowKey="id"
           loading={loading}
           pagination={{
-            pageSize: 10,
+            total: total,
+            current: currentPage,
+            pageSize: pageSize,
+            onChange: handlePageChange,
+            onShowSizeChange: handlePageSizeChange,
             showSizeChanger: true,
-            showQuickJumper: true,
+            pageSizeOptions: ['2', '3', '5', '10'],
+            showTotal: (total) => `共 ${total} 条`
           }}
         />
       </Card>

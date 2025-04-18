@@ -147,7 +147,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-          <Col span={12}>
+          <Col span={24}>
             <Card title="Top 5 访问项目">
               <Table
                 dataSource={topProjects}
@@ -156,11 +156,6 @@ const Dashboard: React.FC = () => {
                 pagination={false}
                 size="small"
               />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card title="用户来源分布">
-              {/* 这里可以添加饼图组件 */}
             </Card>
           </Col>
         </Row>
