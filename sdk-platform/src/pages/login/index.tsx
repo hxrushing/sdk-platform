@@ -3,20 +3,22 @@ import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '@/services/api';
+import useGlobalStore from '@/store/globalStore';
 import './index.less';
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const setUserInfo = useGlobalStore(state => state.setUserInfo);
 
   const onFinish = async (values: { username: string; password: string }) => {
     try {
       setLoading(true);
       const response = await apiService.login(values);
       
-      if (response.success) {
+      if (response.success && response.user) {
+        setUserInfo(response.user);
         message.success('登录成功');
-        // 登录成功后跳转到dashboard
         navigate('/dashboard');
       } else {
         message.error(response.error || '登录失败');

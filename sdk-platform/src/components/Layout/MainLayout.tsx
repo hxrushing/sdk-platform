@@ -5,14 +5,16 @@ import {
   DashboardOutlined,
   SettingOutlined,
   LineChartOutlined,
-  ApartmentOutlined
+  ApartmentOutlined,
+  UserOutlined
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme, Select, Modal, Form, Input, message } from 'antd';
+import { Layout, Menu, Button, theme, Select, Modal, Form, Input, message, Dropdown, Space } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { apiService, Project } from '@/services/api';
 import logo1 from '@/assets/logo1.png';
 import logo2 from '@/assets/logo2.png';
+import useGlobalStore from '@/store/globalStore';
 
 const { Header, Sider, Content } = Layout;
 const { Option } = Select;
@@ -30,6 +32,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [form] = Form.useForm();
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>('demo-project');
+  const userInfo = useGlobalStore(state => state.userInfo);
+  const setUserInfo = useGlobalStore(state => state.setUserInfo);
+
+  useEffect(() => {
+    console.log('当前用户信息:', userInfo);
+    if (userInfo) {
+      console.log('用户信息结构:', Object.keys(userInfo));
+      console.log('用户名:', (userInfo as any).username);
+    } else {
+      console.log('用户信息为空');
+    }
+  }, []);
 
   // 获取项目列表
   const fetchProjects = async () => {
@@ -84,6 +98,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       message.error('项目创建失败');
     }
   };
+
+  const handleLogout = () => {
+    setUserInfo(null);
+    navigate('/login');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'logout',
+      icon: <UserOutlined />,
+      label: '退出登录',
+      onClick: handleLogout
+    }
+  ];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -141,6 +169,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 ))}
               </Select>
               <Button type="primary" onClick={() => setIsModalVisible(true)}>创建项目</Button>
+              {userInfo && (
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                  <Space className="user-info" style={{ cursor: 'pointer', padding: '0 12px' }}>
+                    <UserOutlined />
+                    <span>{(userInfo as any).username}</span>
+                  </Space>
+                </Dropdown>
+              )}
             </div>
           </div>
         </Header>

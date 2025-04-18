@@ -11,5 +11,4 @@ const useGlobalStore = create<GlobalState>(set => ({
   trackingConfig: { projectId: 'default-project' },
   setUserInfo: (info) => set({ userInfo: info })
 }))
-
 export default useGlobalStore
