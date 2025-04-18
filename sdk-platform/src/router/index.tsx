@@ -11,33 +11,33 @@ import App from '@/App';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
-    children: [
-      {
-        path: '/',
-        element: <Navigate to="/dashboard" replace />,
-      },
-      {
-        path: '/dashboard',
-        element: <Dashboard />,
-      },
-      {
-        path: '/events',
-        element: <EventAnalysis />,
-      },
-      {
-        path: '/funnel',
-        element: <FunnelAnalysis />,
-      },
-      {
-        path: '/event-management',
-        element: <EventManagement />,
-      },
-    ],
+    element: <Login />,
   },
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/app',
+    element: <App />,
+    children: [
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
+      },
+      {
+        path: 'events',
+        element: <EventAnalysis />,
+      },
+      {
+        path: 'funnel',
+        element: <FunnelAnalysis />,
+      },
+      {
+        path: 'event-management',
+        element: <EventManagement />,
+      },
+    ],
   },
   {
     path: '/register',

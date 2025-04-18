@@ -19,7 +19,7 @@ const Login: React.FC = () => {
       if (response.success && response.user) {
         setUserInfo(response.user);
         message.success('登录成功');
-        navigate('/dashboard');
+        navigate('/app/dashboard');
       } else {
         message.error(response.error || '登录失败');
       }
