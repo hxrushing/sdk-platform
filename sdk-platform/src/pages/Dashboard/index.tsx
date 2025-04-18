@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
     avgDuration: 0
   });
   const [topProjects, setTopProjects] = useState<TopProject[]>([]);
-  const [showHelp, setShowHelp] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
 
   const fetchData = async () => {
     try {
