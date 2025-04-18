@@ -162,5 +162,11 @@ export const apiService = {
   }): Promise<TopProject[]> {
     const { data } = await api.get('/top-projects', { params });
     return data.data;
+  },
+
+  // 用户登录
+  async login(credentials: { username: string; password: string }) {
+    const { data } = await api.post('/login', credentials);
+    return data;
   }
 }; 

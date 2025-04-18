@@ -2,6 +2,7 @@ import express from 'express';
 import { StatsService } from '../services/statsService';
 import { EventDefinitionService } from '../services/eventDefinitionService';
 import { TrackingService } from '../services/trackingService';
+import { UserService } from '../services/userService';
 import { Connection } from 'mysql2/promise';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,6 +11,30 @@ export function createApiRouter(db: Connection) {
   const statsService = new StatsService(db);
   const eventDefinitionService = new EventDefinitionService(db);
   const trackingService = new TrackingService(db);
+  const userService = new UserService(db);
+
+  // 用户登录
+  router.post('/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({
+          success: false,
+          error: '用户名和密码不能为空'
+        });
+      }
+
+      const result = await userService.login(username, password);
+      res.json(result);
+    } catch (error) {
+      console.error('登录失败:', error);
+      res.status(500).json({
+        success: false,
+        error: '登录失败，请稍后重试'
+      });
+    }
+  });
 
   // 事件追踪接口
   router.post('/track', async (req, res) => {
