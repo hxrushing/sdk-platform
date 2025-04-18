@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -34,6 +34,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState<string>('demo-project');
   const userInfo = useGlobalStore(state => state.userInfo);
   const setUserInfo = useGlobalStore(state => state.setUserInfo);
+  const [logoPosition, setLogoPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const userInfoRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log('当前用户信息:', userInfo);
@@ -65,22 +69,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   const menuItems = [
     {
-      key: '/dashboard',
+      key: '/app/dashboard',
       icon: <DashboardOutlined />,
       label: '数据概览',
     },
     {
-      key: '/events',
+      key: '/app/events',
       icon: <LineChartOutlined />,
       label: '事件分析',
     },
     {
-      key: '/funnel',
+      key: '/app/funnel',
       icon: <ApartmentOutlined />,
       label: '漏斗分析',
     },
     {
-      key: '/event-management',
+      key: '/app/event-management',
       icon: <SettingOutlined />,
       label: '事件管理',
     },
@@ -113,20 +117,87 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     }
   ];
 
+  const handleDragStart = (e: React.DragEvent) => {
+    setIsDragging(true);
+    const rect = logoRef.current?.getBoundingClientRect();
+    if (rect) {
+      setLogoPosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    if (!isDragging) return;
+    
+    const logoRect = logoRef.current?.getBoundingClientRect();
+    const userInfoRect = userInfoRef.current?.getBoundingClientRect();
+    
+    if (logoRect && userInfoRect) {
+      // 计算logo中心点
+      const logoCenter = {
+        x: e.clientX,
+        y: e.clientY
+      };
+      
+      // 计算用户信息区域中心点
+      const userInfoCenter = {
+        x: userInfoRect.left + userInfoRect.width / 2,
+        y: userInfoRect.top + userInfoRect.height / 2
+      };
+      
+      // 计算距离
+      const distance = Math.sqrt(
+        Math.pow(logoCenter.x - userInfoCenter.x, 2) +
+        Math.pow(logoCenter.y - userInfoCenter.y, 2)
+      );
+      
+      // 调试信息
+      console.log('Logo center:', logoCenter);
+      console.log('UserInfo center:', userInfoCenter);
+      console.log('Distance:', distance);
+      
+      // 当距离小于150像素时触发（增加触发范围）
+      if (distance < 150 && userInfo) {
+        message.success(`Welcome ${userInfo.username}!`);
+        setIsDragging(false);
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    // 重置logo位置
+    if (logoRef.current) {
+      logoRef.current.style.transform = 'none';
+    }
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div style={{ 
-          height: 48, 
-          margin: 16, 
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '8px',
-          padding: '4px',
-          transition: 'all 0.3s'
-        }}>
+        <div
+          ref={logoRef}
+          draggable
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
+          onDragEnd={handleDragEnd}
+          style={{ 
+            height: 48, 
+            margin: 16, 
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '4px',
+            transition: 'all 0.3s',
+            cursor: 'move',
+            position: 'relative',
+            zIndex: 1000
+          }}
+        >
           <img 
             src={collapsed ? logo1 : logo2} 
             alt="Logo" 
@@ -135,7 +206,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               width: collapsed ? '48px' : '160px',
               objectFit: 'contain',
               transition: 'all 0.3s',
-              borderRadius: '6px'
+              borderRadius: '6px',
+              pointerEvents: 'none'
             }}
           />
         </div>
@@ -144,7 +216,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
-          onSelect={({ key }) => navigate(key)}
+          onClick={({ key }) => navigate(key)}
         />
       </Sider>
       <Layout>
@@ -170,12 +242,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               </Select>
               <Button type="primary" onClick={() => setIsModalVisible(true)}>创建项目</Button>
               {userInfo && (
-                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-                  <Space className="user-info" style={{ cursor: 'pointer', padding: '0 12px' }}>
-                    <UserOutlined />
-                    <span>{(userInfo as any).username}</span>
-                  </Space>
-                </Dropdown>
+                <div ref={userInfoRef}>
+                  <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                    <Space className="user-info" style={{ cursor: 'pointer', padding: '0 12px' }}>
+                      <UserOutlined />
+                      <span>{(userInfo as any).username}</span>
+                    </Space>
+                  </Dropdown>
+                </div>
               )}
             </div>
           </div>
