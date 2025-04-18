@@ -4,7 +4,8 @@ import Dashboard from '@/pages/Dashboard';
 import EventAnalysis from '@/pages/EventAnalysis';
 import FunnelAnalysis from '@/pages/FunnelAnalysis';
 import EventManagement from '@/pages/EventManagement';
-import Login from '@/pages/login'
+import Login from '@/pages/login';
+import Register from '@/pages/register';
 import App from '@/App';
 
 const router = createBrowserRouter([
@@ -35,8 +36,12 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path:'/login',
+    path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
   }
 ]);
 

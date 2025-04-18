@@ -36,6 +36,29 @@ export function createApiRouter(db: Connection) {
     }
   });
 
+  // 用户注册
+  router.post('/register', async (req, res) => {
+    try {
+      const { username, password, email } = req.body;
+      
+      if (!username || !password || !email) {
+        return res.status(400).json({
+          success: false,
+          error: '请填写完整的注册信息'
+        });
+      }
+
+      const result = await userService.register(username, password, email);
+      res.json(result);
+    } catch (error) {
+      console.error('注册失败:', error);
+      res.status(500).json({
+        success: false,
+        error: '注册失败，请稍后重试'
+      });
+    }
+  });
+
   // 事件追踪接口
   router.post('/track', async (req, res) => {
     try {

@@ -1,5 +1,6 @@
 import { Connection } from 'mysql2/promise';
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface User {
   id: string;
@@ -16,8 +17,61 @@ export interface LoginResponse {
   error?: string;
 }
 
+export interface RegisterResponse {
+  success: boolean;
+  error?: string;
+}
+
 export class UserService {
   constructor(private db: Connection) {}
+
+  // 用户注册
+  async register(username: string, password: string, email: string): Promise<RegisterResponse> {
+    try {
+      // 检查用户名是否已存在
+      const [existingUsers] = await this.db.execute(
+        'SELECT * FROM users WHERE username = ?',
+        [username]
+      );
+      
+      if (Array.isArray(existingUsers) && existingUsers.length > 0) {
+        return {
+          success: false,
+          error: '用户名已存在'
+        };
+      }
+
+      // 检查邮箱是否已存在
+      const [existingEmails] = await this.db.execute(
+        'SELECT * FROM users WHERE email = ?',
+        [email]
+      );
+      
+      if (Array.isArray(existingEmails) && existingEmails.length > 0) {
+        return {
+          success: false,
+          error: '邮箱已被注册'
+        };
+      }
+
+      // 创建新用户
+      const userId = uuidv4();
+      await this.db.execute(
+        'INSERT INTO users (id, username, password, email) VALUES (?, ?, ?, ?)',
+        [userId, username, this.hashPassword(password), email]
+      );
+
+      return {
+        success: true
+      };
+    } catch (err) {
+      console.error('注册失败:', err);
+      return {
+        success: false,
+        error: '注册失败，请稍后重试'
+      };
+    }
+  }
 
   // 用户登录
   async login(username: string, password: string): Promise<LoginResponse> {

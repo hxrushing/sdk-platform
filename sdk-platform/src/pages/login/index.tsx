@@ -70,6 +70,16 @@ const Login: React.FC = () => {
               登录
             </Button>
           </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="link"
+              onClick={() => navigate('/register')}
+              block
+            >
+              没有账号？去注册
+            </Button>
+          </Form.Item>
         </Form>
       </Card>
     </div>

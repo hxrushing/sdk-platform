@@ -164,6 +164,12 @@ export const apiService = {
     return data.data;
   },
 
+  // 用户注册
+  async register(credentials: { username: string; password: string; email: string }) {
+    const { data } = await api.post('/register', credentials);
+    return data;
+  },
+
   // 用户登录
   async login(credentials: { username: string; password: string }) {
     const { data } = await api.post('/login', credentials);
