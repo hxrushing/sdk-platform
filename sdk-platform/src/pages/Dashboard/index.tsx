@@ -41,7 +41,6 @@ const Dashboard: React.FC = () => {
           endDate: dateRange[1].format('YYYY-MM-DD')
         })
       ]);
-
       setStatsData(stats);
       setOverview(overviewData);
       setTopProjects(topProjectsData);
